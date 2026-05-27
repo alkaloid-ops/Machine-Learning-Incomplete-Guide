@@ -35,21 +35,21 @@
 
 - 支持度: 几个关联的数据样本在全部数据样本出现的比例
     
-    $$
-    Support(X,Y)=\frac{count(X,Y)}{Total}
-    $$
+$$
+Support(X,Y)=\frac{count(X,Y)}{Total}
+$$
     
 - 置信度: 包含某一的类别的情况, 再满足另一类别的概率(即条件概率)
     
-    $$
-    Confidence(X,Y)=\frac{Support(X,Y)}{Support(X)}
-    $$
+$$
+Confidence(X,Y)=\frac{Support(X,Y)}{Support(X)}
+$$
     
 - 提升度: 当提升度为1时, 表示X的出现与Y的出现没有什么影响(X和Y为独立事件), 当提升度大于1时, 表示X的出现提高了Y的出现概率(X和Y是正相关的), 当提升度小于1时, 表示X的出现降低了Y的出现概率(X和Y是负相关的)
     
-    $$
-    Lift(X,Y)=\frac{Confidence(X,Y)}{Support(Y)}
-    $$
+$$
+Lift(X,Y)=\frac{Confidence(X,Y)}{Support(Y)}
+$$
     
 
 ## 关联规则Apriori算法流程
@@ -64,45 +64,45 @@
 - 设定最小支持度和最小置信度(两个超参数)(假设最小支持度为0.6; 最小置信度为0.8)
 - 计算交易数据中所有类别的支持度(统计某一类别的样本数量占全部样本数据的比例)
     
-    $$
-    牛奶=\frac{4}{5}=0.8\quad 面包=\frac{4}{5}=0.8\quad 尿布=\frac{4}{5}=0.8\quad 啤酒=\frac{3}{5}=0.6\quad 鸡蛋=\frac{1}{5}=0.2\quad 可乐=\frac{2}{5}=0.4
-    $$
+$$
+牛奶=\frac{4}{5}=0.8\quad 面包=\frac{4}{5}=0.8\quad 尿布=\frac{4}{5}=0.8\quad 啤酒=\frac{3}{5}=0.6\quad 鸡蛋=\frac{1}{5}=0.2\quad 可乐=\frac{2}{5}=0.4
+$$
     
 - 筛选出支持度大于设定阈值的类别(牛奶、面包、尿布、啤酒)
 - 生成两两组合的样本(牛奶与面包、牛奶与尿布、牛奶与啤酒、面包与尿布、面包与啤酒、尿布与啤酒)
 - 检查组合后的样本里的类别是否都包含组合前的类别
 - 计算两两组合的样本的支持度
     
-    $$
-    牛奶与面包=\frac{3}{5}=0.6\quad牛奶与尿布=\frac{3}{5}=0.6\quad牛奶与啤酒=\frac{2}{5}=0.4\quad面包与尿布=\frac{3}{5}=0.6\quad面包与啤酒=\frac{2}{5}=0.4\quad尿布与啤酒=\frac{3}{5}=0.6
-    $$
+$$
+牛奶与面包=\frac{3}{5}=0.6\quad牛奶与尿布=\frac{3}{5}=0.6\quad牛奶与啤酒=\frac{2}{5}=0.4\quad面包与尿布=\frac{3}{5}=0.6\quad面包与啤酒=\frac{2}{5}=0.4\quad尿布与啤酒=\frac{3}{5}=0.6
+$$
     
 - 筛选出支持度大于设定阈值的类别(牛奶与面包、牛奶与尿布、面包与尿布、尿布与啤酒)
 - 生成三类别组合(要求前k-2个类别都相同)(牛奶与面包与尿布)
 - 计算三类别组合的支持度
     
-    $$
-    牛奶与面包与尿布=\frac{2}{5}=0.4
-    $$
+$$
+牛奶与面包与尿布=\frac{2}{5}=0.4
+$$
     
 - 支持度不满足最小阈值, 淘汰这个组合, 同时迭代停止(当迭代停止时, 如果没有组合筛选出, 那么最终结果为上一次迭代的组合)
 - 计算最终结果的各个组合的置信度(根据设定的最小置信度筛选出组合(尿布与啤酒大于0.8))
     
-    $$
-    Confidence(牛奶与面包)=\frac{Support(牛奶与面包)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶与面包)=\frac{Support(牛奶与面包)}{Support(面包)}=\frac{0.6}{0.8}=0.75
-    $$
+$$
+Confidence(牛奶与面包)=\frac{Support(牛奶与面包)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶与面包)=\frac{Support(牛奶与面包)}{Support(面包)}=\frac{0.6}{0.8}=0.75
+$$
     
-    $$
-    Confidence(牛奶与尿布)=\frac{Support(牛奶与尿布)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶与尿布)=\frac{Support(牛奶与尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
-    $$
+$$
+Confidence(牛奶与尿布)=\frac{Support(牛奶与尿布)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶与尿布)=\frac{Support(牛奶与尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
+$$
     
-    $$
-    Confidence(面包与尿布)=\frac{Support(面包与尿布)}{Support(面包)}=\frac{0.6}{0.8}=0.75\quad Confidence(面包与尿布)=\frac{Support(面包与尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
-    $$
+$$
+Confidence(面包与尿布)=\frac{Support(面包与尿布)}{Support(面包)}=\frac{0.6}{0.8}=0.75\quad Confidence(面包与尿布)=\frac{Support(面包与尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
+$$
     
-    $$
-    Confidence(尿布与啤酒)=\frac{Support(尿布与啤酒)}{Support(尿布)}=\frac{0.6}{0.8}=0.75\quad Confidence(尿布与啤酒)=\frac{Support(尿布与啤酒)}{Support(啤酒)}=\frac{0.6}{0.6}=1
-    $$
+$$
+Confidence(尿布与啤酒)=\frac{Support(尿布与啤酒)}{Support(尿布)}=\frac{0.6}{0.8}=0.75\quad Confidence(尿布与啤酒)=\frac{Support(尿布与啤酒)}{Support(啤酒)}=\frac{0.6}{0.6}=1
+$$
     
 - 导入Apriori语句
     
@@ -154,29 +154,29 @@
 - 倒数第四类为牛奶T1、T5、T4、T3中, 类别为零
 - 计算留下来的类别组合和组合中单个类别的支持度与置信度(设置信度阈值为0.8, 那么淘汰小于阈值的组合, 留言唯一组合尿布和啤酒)
     
-    $$
-    Support(尿布)=\frac{4}{5}=0.8\quad Support(啤酒)=\frac{3}{5}=0.6\quad Support(牛奶)=\frac{4}{5}=0.8\quad Support(面包)=\frac{4}{5}=0.8\quad 
-    $$
+$$
+Support(尿布)=\frac{4}{5}=0.8\quad Support(啤酒)=\frac{3}{5}=0.6\quad Support(牛奶)=\frac{4}{5}=0.8\quad Support(面包)=\frac{4}{5}=0.8\quad 
+$$
     
-    $$
-    Support(尿布和啤酒)=\frac{3}{5}=0.6\quad Support(牛奶和尿布)=\frac{3}{5}=0.6\quad Support(面包和尿布)=\frac{3}{5}=0.6\quad Support(牛奶和面包)=\frac{3}{5}=0.6
-    $$
+$$
+Support(尿布和啤酒)=\frac{3}{5}=0.6\quad Support(牛奶和尿布)=\frac{3}{5}=0.6\quad Support(面包和尿布)=\frac{3}{5}=0.6\quad Support(牛奶和面包)=\frac{3}{5}=0.6
+$$
     
-    $$
-    Confidence(尿布和啤酒)=\frac{Support(尿布和啤酒)}{Support(尿布)}=\frac{0.6}{0.8}=0.75\quad Confidence(尿布和啤酒) =\frac{Support(尿布和啤酒)}{Support(啤酒)}=\frac{0.6}{0.6}=1
-    $$
+$$
+Confidence(尿布和啤酒)=\frac{Support(尿布和啤酒)}{Support(尿布)}=\frac{0.6}{0.8}=0.75\quad Confidence(尿布和啤酒) =\frac{Support(尿布和啤酒)}{Support(啤酒)}=\frac{0.6}{0.6}=1
+$$
     
-    $$
-    Confidence(牛奶和尿布)=\frac{Support(牛奶和尿布)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶和尿布) =\frac{Support(牛奶和尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
-    $$
+$$
+Confidence(牛奶和尿布)=\frac{Support(牛奶和尿布)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶和尿布) =\frac{Support(牛奶和尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
+$$
     
-    $$
-    Confidence(面包和尿布)=\frac{Support(面包和尿布)}{Support(面包)}=\frac{0.6}{0.8}=0.75\quad Confidence(面包和尿布) =\frac{Support(面包和尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
-    $$
+$$
+Confidence(面包和尿布)=\frac{Support(面包和尿布)}{Support(面包)}=\frac{0.6}{0.8}=0.75\quad Confidence(面包和尿布) =\frac{Support(面包和尿布)}{Support(尿布)}=\frac{0.6}{0.8}=0.75
+$$
     
-    $$
-    Confidence(牛奶和面包)=\frac{Support(牛奶和面包)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶和面包) =\frac{Support(牛奶和面包)}{Support(面包)}=\frac{0.6}{0.8}=0.75
-    $$
+$$
+Confidence(牛奶和面包)=\frac{Support(牛奶和面包)}{Support(牛奶)}=\frac{0.6}{0.8}=0.75\quad Confidence(牛奶和面包) =\frac{Support(牛奶和面包)}{Support(面包)}=\frac{0.6}{0.8}=0.75
+$$
     
 - 导入FP-Growth语句
     
