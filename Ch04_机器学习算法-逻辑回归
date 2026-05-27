@@ -1,0 +1,182 @@
+
+
+# 逻辑回归
+
+- 首先模型对数据拟合一个线性函数(线性回归算法), 然后将这个线性函数输入Sigmoid函数, Sigmoid函数将输出概率值
+- Sigmoid函数(函数输出值在0-1区间内, 但是取不到0或1)
+    
+    $$
+    g(z)=\frac{1}{1+e^{-z}}=(1+e^{-z})^{-1}
+    $$
+    
+- Sigmoid函数求导
+    
+    $$
+    设a=1+e^{-z} ，则g(z)=a^{-1}
+    $$
+    
+    $$
+    \frac{\partial g}{\partial z}=
+    \frac{\partial g}{\partial a}\times 
+    \frac{\partial a}{\partial z}=
+    (-a^{-2}) \times (-e^{-z})=
+    \frac{1}{a^2} \times (e^{-z})=
+    \frac{e^{-z}}{a^2}=
+    \frac{e^{-z}}{(1+e^{-z})^2}
+    $$
+    
+    $$
+    =\frac{1}{1+e^{-z}}\times \frac{e^{-z}}{1+e^{-z}}
+    =\frac{1}{1+e^{-z}}\times (\frac{1+e^{-z}}{1+e^{-z}}-\frac{1}{1+e^{-z}})
+    =\frac{1}{1+e^{-z}}\times (1-\frac{1}{1+e^{-z}})
+    =g(z)(1-g(z))
+    $$
+    
+- 极大似然估计MLE（伯努利）
+
+$$
+MLE=\prod^n_{i=1} P^{x_i}(1-P)^{1-x_i}
+$$
+
+- 对数似然
+
+$$
+Log(MLE)=log(\prod^n_{i=1} P^{x_i}(1-P)^{1-x_i})=\sum^n_{i=1}log(P^{x_i}(1-P)^{1-x_i})=\sum^n_{i=1} [x_ilog(P)+(1-x_i)log(1-P)]
+$$
+
+$$
+=(\sum^n_{i=1} x_i) log(P)+(n-\sum^n_{i=1}x_i)log(1-P)（其中P为Sigmoid函数输出的概率值）
+$$
+
+- 转换优化问题（对数函数是递增函数，取负值将函数转换为递减）
+
+$$
+-Log(MLE)=-[(\sum^n_{i=1} x_i) log(P)+(n-\sum^n_{i=1}x_i)log(1-P)]=-\sum^n_{i=1}[x_ilog(P)+(1-x_i)log(1-P)]
+$$
+
+- 二元交叉熵损失函数
+    
+    $$
+    loss=-\sum^n_{i=1}[x_ilog(P)+(1-x_i)log(1-P)]=-\frac{1}{n}\sum ^n_{i=1}[y_ilog(\hat{y_i})+(1-y_i)log(1-\hat{y_i})](增加n分之一为求平均损失)
+    $$
+    
+- 二元交叉熵损失函数求偏导数
+
+$$
+\frac{\partial J}{\partial P}=-\frac{1}{n}\sum^n_{i=1}[y_ilog(P)+(1-y_i)log(1-P)]=-(\frac{y}{P}-\frac{1-y}{1-P})
+$$
+
+$$
+\frac{\partial P}{\partial z}=P(1-P)
+$$
+
+$$
+\frac{\partial J}{\partial z}=
+\frac{\partial J}{\partial P}\times
+\frac{\partial P}{\partial z}
+=-(\frac{y}{P}-\frac{1-y}{1-P})(P(1-P))=-(\frac{y(1-P)}{P(1-P)}-\frac{P(1-y)}{P(1-P)})(P(1-P))
+=-\frac{(y(1-P)-P(1-y))(P(1-P))}{P(1-P)}
+$$
+
+$$
+=-(y(1-P)-P(1-y))=-(y-yP-P+Py)=-(y-P)=-y+P=P-y=\frac{1}{n}\sum^n_{i=1} (\hat y_i-y_i)
+$$
+
+$$
+z=Xw+b，则\frac{\partial z}{\partial w} =X \Rightarrow \frac{\partial J}{\partial w}=
+\frac{\partial J}{\partial P}\times
+\frac{\partial P}{\partial z}\times
+\frac{\partial z}{\partial w}
+=\frac{1}{n}\sum^n_{i=1} X^T(\hat y_i-y_i)
+$$
+
+$$
+z=Xw+b，则\frac{\partial z}{\partial b} =1 \Rightarrow \frac{\partial J}{\partial b}=
+\frac{\partial J}{\partial P}\times
+\frac{\partial P}{\partial z}\times
+\frac{\partial z}{\partial b}
+=\frac{1}{n}\sum^n_{i=1} (\hat y_i-y_i)
+$$
+
+- 梯度下降更新迭代公式
+
+$$
+w=w-\alpha \frac{1}{n}X^T(Xw+b-y)
+$$
+
+$$
+b=b-\alpha \frac{1}{n} (Xw+b-y)
+$$
+
+- 增加L1或L2正则化后的梯度下降更新迭代公式和Lasso或Ridge回归一致
+
+$$
+L1正则：w = w-\alpha [\frac{1}{n}X^T(Xw-y)+\lambda \cdot sign(w) ]= w-\alpha \frac{1}{n}X^T(Xw-y)-\alpha \lambda \cdot sign(w)
+$$
+
+$$
+L2正则：w = w-\alpha [\frac{1}{n}X^T(Xw-y)+\frac{\lambda}{n}w ]= w-\alpha \frac{1}{n}X^T(Xw-y)-\alpha \frac{\lambda}{n}w
+$$
+
+- 导入逻辑回归语句
+    
+    ```python
+    from sklearn.linear_model import LogisticRegression
+    ```
+    
+- 逻辑回归参数详解
+    
+    ```python
+    LogisticRegression(
+        penalty='l2', #正则化参数, 默认l2(使权重系数均匀缩小, 不会取到0), 备选参数: 'l1'(产生稀疏, 部分权重系数压缩到0), 'elasticnet'l1l2混合正则化(需要配合l1_ratio参数)
+        dual=False, #对偶问题求解, 默认False
+        tol=0.0001, #优化算法的停止阈值, 默认0.0001, 值越小精度越高, 但训练时间越长, 值越大收敛越快, 但可能影响模型性能
+        C=0.5, #正则化强度的倒数(越小表示正则化越强)
+        fit_intercept=True, #是否添加偏置项(截距b)
+        intercept_scaling=1, #截距缩放(当使用l1正则化时, 调整截距项的正则化强度)(取值大于0的浮点数)(solver='liblinear'和fit_intercept=True有效)
+        class_weight=None, #类别权重, 备选参数'balanced'自动调整权重与类别频率成反比, 或传入自定义权重字典
+        random_state=42,
+        solver='lbfgs', #选择用于优化的算法
+        max_iter=1000, #优化算法的最大迭代次数(大数据集或复杂问题需增加)
+        multi_class='multinomial', #直接处理多分类, 备选参数'ovr'(当solver='liblinear'时只能用ovr)训练K个二元分类器
+        verbose=0, #详细输出
+        warm_start=False, #是否复用前一次调用的解作为初始化
+        n_jobs=-1, #指定并行计算使用的CPU核心数
+        l1_ratio=None #L1正则化比例(取值0-1之间的浮点数)(只有在penalty='elasticnet'生效)
+    )
+    #优化算法参数
+    	#lbfgs和newton-cg是基于牛顿法来优化损失函数, 配合l2正则化使用, 不惩罚偏置b, 适合中小型数据集
+    	#sag和saga是基于随机平均梯度下降来优化损失函数, sag配合l2正则化, saga配合l1/l2正则化, 不惩罚偏置b, 适合大型数据集(数据标准化可加速收敛)
+    	#liblinear二分类专用, 惩罚偏置b, 适合中小型数据集
+    ```
+    
+- 模型实例化并拟合(训练)数据语句
+    
+    ```python
+    LR = LogisticRegression().fit(Xtrain,ytrain)
+    ```
+    
+- 查看模型权重参数
+    
+    ```python
+    LR.coef_
+    ```
+    
+- 筛选模型权重参数不等于0的特征(可结合SelectFromModel嵌入法来做特征选择)(仅限在L1正则化下使用)
+    
+    ```python
+    LR.coef_ != 0
+    ```
+    
+- 获取模型达到最佳值的最大迭代参数max_iter的值
+    
+    ```python
+    LR.n_iter_
+    ```
+    
+- 获取模型函数偏置b
+    
+    ```python
+    LR.intercept_
+    ```
+    
