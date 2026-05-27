@@ -18,15 +18,15 @@
 - Boosting的通用计算表达式
 - 模型最终输出表达式(即所有弱评估器结果的加权求和)
     
-    $$
-    Final(x_i)=\sum^k_{k=1} w_i f_k(x_i)
-    $$
+$$
+Final(x_i)=\sum^k_{k=1} w_i f_k(x_i)
+$$
     
 - 集成模型内部某一个弱评估器的计算表达式(当前为k, 上一个为k-1, alpha为学习率或迭代步长, w为权重/梯度向量)
     
-    $$
-    F_k(x_i)=F_{k-1}(x_i)+\alpha w_i f_k(x_i)
-    $$
+$$
+F_k(x_i)=F_{k-1}(x_i)+\alpha w_i f_k(x_i)
+$$
     
 
 ### 自适应提升AdaBoost
@@ -34,36 +34,36 @@
 - 拟合全部训练集样本建立一棵决策树, 标记出预测误差较大或错误的样本, 对这些样本赋予权重, 后一个决策树用这些带权重的样本训练, 标记出预测误差较大或错误的样本, 再对这些样本赋予权重, 其中多次预测误差较大或错误的样本赋予更高的权重, 使后面的决策树更关注这些高权重的样本(权重遵循此消彼长的机制, 即错误样本的权重增加的同时正确的样本的权重相应会降低, 所有样本总权重不变)
 - 回归损失函数linear(其中分母取预测值与真实值的差值最大的值)
     
-    $$
-    L=\frac{|\hat y_i-y_i|}{max(|\hat y_i -y_i|)}
-    $$
+$$
+L=\frac{|\hat y_i-y_i|}{max(|\hat y_i -y_i|)}
+$$
     
 - 回归损失函数square(其中分母取预测值与真实值的差值最大的值的平方)
     
-    $$
-    L=\frac{|\hat y_i-y_i|^2}{max(|\hat y_i -y_i|)^2}
-    $$
+$$
+L=\frac{|\hat y_i-y_i|^2}{max(|\hat y_i -y_i|)^2}
+$$
     
 - 回归损失函数exponential(其中指数分母取预测值与真实值的差值最大的值)
     
-    $$
-    L=1-e^{(\frac{-|\hat y_i-y_i|}{max(|\hat y_i -y_i|)})}
-    $$
+$$
+L=1-e^{(\frac{-|\hat y_i-y_i|}{max(|\hat y_i -y_i|)})}
+$$
     
 - 二分类指数损失函数
 - yhat为预测标签向量(取值为-1或1); y为真实标签向量(取值为-1或1)
     
-    $$
-    L(\hat y_i,y_i)=e^{-y_i \hat y_i}
-    $$
+$$
+L(\hat y_i,y_i)=e^{-y_i \hat y_i}
+$$
     
 - 多分类指数损失函数(其中k为总类别数量—去重复)
 - yhat为m行k列矩阵, 其中预测最大概率值的标签为1, 其余标签取值为-1/k-1
 - y为m行k列矩阵, 其中标签类别编码和特征类别编码值一致的位置为1, 其余都为-1/k-1
     
-    $$
-    L(\hat y_i ,y_i)=e^{-\frac{1}{k}y_i \hat y_i}
-    $$
+$$
+L(\hat y_i ,y_i)=e^{-\frac{1}{k}y_i \hat y_i}
+$$
     
 - 算法计算流程
     - 初始化训练数据的权重, 每一个样本权重为1/n
@@ -71,39 +71,39 @@
     - 使用训练子集Xtrain_m和标签子集ytrain_m拟合一棵树f_n, 得到预测结果为yhat_m
     - 先计算单个样本的损失, 最后计算全部样本的加权平均损失(w’_i是样本权重)
         
-        $$
-        L = \sum^n_{i=1} w'_iL(\hat y_i ,y_i)
-        $$
+$$
+L = \sum^n_{i=1} w'_iL(\hat y_i ,y_i)
+$$
         
     - 根据最终的加权平均损失计算置信度(其中lambda为防止分母为0的常数)(置信度越接近0越好, 模型预测结果越好)
         
-        $$
-        置信度=\frac{L}{1-L+\lambda}
-        $$
+$$
+置信度=\frac{L}{1-L+\lambda}
+$$
         
     - 根据置信度更新单个样本权重(单样本新权重=单样本原权重乘以置信度的1-单样本损失的次方)
         
-        $$
-        w'_i =  w'_i\cdot e^{-w_i y_i \hat y_i}
-        $$
+$$
+w'_i =  w'_i\cdot e^{-w_i y_i \hat y_i}
+$$
         
     - 单个评估器f_n的权重计算
         
-        $$
-        w_i = log(\frac{1}{置信度})
-        $$
+$$
+w_i = log(\frac{1}{置信度})
+$$
         
     - 集成模型内评估器的计算(w_i是评估器权重)
         
-        $$
-        F_n(x_i)=F_{n-1}+\alpha w_i f_n(x_i)
-        $$
+$$
+F_n(x_i)=F_{n-1}+\alpha w_i f_n(x_i)
+$$
         
     - 迭代停止条件: 当集成模型预测值小于等于真实值的那些评估器的权重和大于等于等于二分之一的所有评估器的权重和时, 迭代停止
         
-        $$
-        (\sum^n_{i=预测值\leq真实值} 单个评估器权重)\geq(\frac{1}{2}\sum^n_{i=1} 单个评估器权重)
-        $$
+$$
+(\sum^n_{i=预测值\leq真实值} 单个评估器权重)\geq(\frac{1}{2}\sum^n_{i=1} 单个评估器权重)
+$$
         
 - 导入AdaBoost语句
     
@@ -148,60 +148,60 @@
 - 对于多分类任务, 集成模型内的弱评估器将输出k个回归预测向量, 最终分类结果在回归预测向量的基础上套上Sigmoid二分类或Softmax多分类来输出分类结果或概率值
 - GBDT二分类交叉熵损失函数(⚠️GBDT直接输出是回归预测, 在输入损失函数前需要输入Sigmoid函数转换成概率值)
     
-    $$
-    L(\hat y_i, y_i) = -\sum^n_{i=1}[y_ilog(\hat y_i)+(1-y_i)log((1-\hat y_i))]
-    $$
+$$
+L(\hat y_i, y_i) = -\sum^n_{i=1}[y_ilog(\hat y_i)+(1-y_i)log((1-\hat y_i))]
+$$
     
 - GBDT多分类交叉熵损失函数(⚠️GBDT直接输出是回归预测, 在输入损失函数前需要输入Softmax函数转换成概率值)
 - (其中k为分类类别数量, y_k为m行k列的稀疏矩阵, 每个样本所对应的真实标签下为1, 其余为0, yhat_k为Softmax输出的概率矩阵)
     
-    $$
-    L(\hat y_i, y_i) = -\sum^k_{i=1}y_k log(\hat y_k)
-    $$
+$$
+L(\hat y_i, y_i) = -\sum^k_{i=1}y_k log(\hat y_k)
+$$
     
 - GBDT二分类指数损失函数
     
-    $$
-    L(\hat y_i, y_i) = e^{-y_i \hat  y_i}
-    $$
+$$
+L(\hat y_i, y_i) = e^{-y_i \hat  y_i}
+$$
     
 - GBDT多分类指数损失函数
     
-    $$
-    L(\hat y_i ,y_i)=e^{-\frac{1}{k}y_i \hat y_i}
-    $$
+$$
+L(\hat y_i ,y_i)=e^{-\frac{1}{k}y_i \hat y_i}
+$$
     
 - GBDT 平方损失函数
     
-    $$
-    L(\hat y_i ,y_i)=\sum^n_{i=1} (\hat y_i -y_i)^2
-    $$
+$$
+L(\hat y_i ,y_i)=\sum^n_{i=1} (\hat y_i -y_i)^2
+$$
     
 - GBDT 绝对损失函数
     
-    $$
-    L(\hat y_i ,y_i)=\sum^n_{i=1} |\hat y_i -y_i|^2
-    $$
+$$
+L(\hat y_i ,y_i)=\sum^n_{i=1} |\hat y_i -y_i|^2
+$$
     
 - GBDT Huber损失函数(其中alpha为超参数, 默认值0.9)
     
-    $$
-    L_\alpha(\hat y_i,y_i)=\frac{1}{2}(\hat y_i -y_i)^2\quad if|\hat y_i-y_i|\leq \alpha \quad\quad L_\alpha(\hat y_i,y_i)=\alpha(|\hat y_i -y_i|-\frac{1}{2}\alpha)\quad\quad if|\hat y_i-y_i|> \alpha
-    $$
+$$
+L_\alpha(\hat y_i,y_i)=\frac{1}{2}(\hat y_i -y_i)^2\quad if|\hat y_i-y_i|\leq \alpha \quad\quad L_\alpha(\hat y_i,y_i)=\alpha(|\hat y_i -y_i|-\frac{1}{2}\alpha)\quad\quad if|\hat y_i-y_i|> \alpha
+$$
     
 - GBDT Quantile损失函数(其中alpha为超参数, 默认值0.9)
     
-    $$
-    L_\alpha(\hat y_i,y_i)=\alpha|\hat y_i -y_i|\quad if: y_i\geq\hat y_i \quad\quad L_\alpha(\hat y_i,y_i)=(1-\alpha)|\hat y_i -y_i|\quad\quad if: y_i<\hat y_i
-    $$
+$$
+L_\alpha(\hat y_i,y_i)=\alpha|\hat y_i -y_i|\quad if: y_i\geq\hat y_i \quad\quad L_\alpha(\hat y_i,y_i)=(1-\alpha)|\hat y_i -y_i|\quad\quad if: y_i<\hat y_i
+$$
     
 - 高度关注异常值时, 选平方损失函数; 想要减少异常值对模型的干扰影响时, 选绝对损失函数; 平衡两者选Huber或Quantile
 - 集成学习中的决策树不使用gini和entropy来衡量信息不纯度, 而使用弗里德曼均方误差(其中N_L和N_R为左右子节点的样本数, ybar_L和ybar_R为左右子节点的样本均值)(追求值越大越好)
 - 弗里德曼决策树分裂理念: 左右分叉时样本数量尽量一致, 但是信息不纯度左右两边差异尽可能大, 这样能够降低模型结构复杂度, 并加速分叉
     
-    $$
-    FriedmanMSE = \frac{N_L\cdot N_R}{N_L+N_R}(\bar y_L-\bar y_R)^2
-    $$
+$$
+FriedmanMSE = \frac{N_L\cdot N_R}{N_L+N_R}(\bar y_L-\bar y_R)^2
+$$
     
 - 训练早停
     - 当模型效果足够好, 继续迭代提升很微小时, 应该停止训练
@@ -210,35 +210,35 @@
 - 算法计算流程
     - 初始化迭代起点f_0(求解常数C, 使得损失函数中每个真实值与常数C的误差和最小(对C的一阶偏导数为0时), 最小的误差和作为初始化迭代的起点数)
         
-        $$
-        F_0(x_i)=\argmin\limits_{C}\sum^n_{i=1}l(y_i,C)
-        $$
+$$
+F_0(x_i)=\argmin\limits_{C}\sum^n_{i=1}l(y_i,C)
+$$
         
     - 从训练样本中抽样, 构成训练集子集
     - 对于任意一个样本计算伪残差(对上一个评估器的预测结果的损失函数中对预测值求一阶导数)
         
-        $$
-        r = -\frac{\delta l(y_i,F_{k-1}(x_i))}{\delta F_{k-1}(x_i)}
-        $$
+$$
+r = -\frac{\delta l(y_i,F_{k-1}(x_i))}{\delta F_{k-1}(x_i)}
+$$
         
     - 创建新的评估器, 拟合训练数据和预测标签(预测标签为伪残差/负梯度)
     - 更新迭代公式为
         
-        $$
-        F_k(x_i)=F_{k-1}(x_i)+\alpha f_k(x_i)
-        $$
+$$
+F_k(x_i)=F_{k-1}(x_i)+\alpha f_k(x_i)
+$$
         
     - 迭代完成最终模型输出结果为
         
-        $$
-        Final(x_i)=\sum^k_{k=1}f_k(x_i)
-        $$
+$$
+Final(x_i)=\sum^k_{k=1}f_k(x_i)
+$$
         
 - 泰勒公式展开逼近损失函数
     
-    $$
-    l(y_i,\hat y_i)=l(y_i, F_{k-1}(x_i)+ f_k(x_i))\approx l(F_{k-1}(x_i))+\frac{\delta l(F_{k-1}(x_i))}{\delta F_{k-1}(x_i)}f_k(x_i)
-    $$
+$$
+l(y_i,\hat y_i)=l(y_i, F_{k-1}(x_i)+ f_k(x_i))\approx l(F_{k-1}(x_i))+\frac{\delta l(F_{k-1}(x_i))}{\delta F_{k-1}(x_i)}f_k(x_i)
+$$
     
 - 导入GBDT语句
     
@@ -337,67 +337,67 @@
 
 - 模型最终输出表达式(所有评估器的求和, 无加权)
     
-    $$
-    Final(x)=\sum^n_{k=1}f_k(x)
-    $$
+$$
+Final(x)=\sum^n_{k=1}f_k(x)
+$$
     
 - 目标函数表达式(其中第一项为损失函数之和, 第二项控制模型结构复杂度)
     
-    $$
-    \text{Obj} = \sum_{i=1}^{n} L(y_i, \hat{y}_i) + \Omega(f_t)
-    $$
+$$
+\text{Obj} = \sum_{i=1}^{n} L(y_i, \hat{y}_i) + \Omega(f_t)
+$$
     
 - 目标函数第一项中预测值函数展开(预测值为前面k-1棵树的预测值的总和+当前第k棵树的预测值)
     
-    $$
-    F_k(x_i)=F_{k-1}(x_i)+\eta f_k(x_i)
-    $$
+$$
+F_k(x_i)=F_{k-1}(x_i)+\eta f_k(x_i)
+$$
     
 - 目标函数第二项展开(这部分控制模型复杂度, gamma为叶子节点数的惩罚系数(超参数), T为叶子节点总数量, lambda或alpha为正则化系数(超参数), w为叶子权重(即每一颗树的预测值)(L2范数))
 
 $$
- \Omega(f_k)= \gamma T + \frac{1}{2}\lambda ||w_i||^2\quad 或 \quad\Omega(f_k)= \gamma T + \alpha \sum^n_{i=1}|w_i|
+\Omega(f_k)= \gamma T + \frac{1}{2}\lambda ||w_i||^2\quad 或 \quad\Omega(f_k)= \gamma T + \alpha \sum^n_{i=1}|w_i|
 $$
 
 - 单个叶子节点的结构分数公式(其中分子为单个叶子节点所有样本的损失函数的对预测值求一阶导数之和的平方, 分母为单个叶子节点的所有样本的损失函数的对预测值求二阶导数之和)
 - L1正则化系数alpha加在分子上, L2正则化系数lambda加在分母上
     
-    $$
-    Score_{L1}=\frac{(\sum^n_{i=1} f'(x_i))^2+\alpha}{\sum^n_{i=1} f''(x_i)}\quad 或\quad Score_{L2}=\frac{(\sum^n_{i=1} f'(x_i))^2}{\sum^n_{i=1} f''(x_i)+\lambda}
-    $$
+$$
+Score_{L1}=\frac{(\sum^n_{i=1} f'(x_i))^2+\alpha}{\sum^n_{i=1} f''(x_i)}\quad 或\quad Score_{L2}=\frac{(\sum^n_{i=1} f'(x_i))^2}{\sum^n_{i=1} f''(x_i)+\lambda}
+$$
     
 - 算法计算流程
     - 初始化迭代起点f_0(求解常数C, 使得损失函数中每个真实值与常数C的误差和最小(对C的一阶偏导数为0时), 最小的误差和作为初始化迭代的起点数)
         
-        $$
-        F_0(x_i)=\argmin\limits_{C}\sum^n_{i=1}l(y_i,C)
-        $$
+$$
+F_0(x_i)=\argmin\limits_{C}\sum^n_{i=1}l(y_i,C)
+$$
         
     - 从训练样本中抽样, 构成训练集子集
     - 对目标函数第一部分应用泰勒公式公式展开近似(计算函数的0阶(函数本身)、1阶和2阶导数)(第一项0阶可以忽略, 第二项1阶导数g_i, 第三项2阶导数h_i)(泰勒近似后, 第一项为常数, 即上一次迭代输出的值)
         
-        $$
-        l(y_i, \hat{y}_i)\approx l(y_i, \hat{y}_i)+\frac{\delta L}{\delta \hat y_i}f_t (x_i) +\frac{1}{2}\frac{\delta^2 L}{\delta^2 \hat y_i}(f_t (x_i) )^2\approx l(f_{k-1}(x_i))+g_if_t (x_i)+\frac{1}{2}h_i(f_t (x_i) )^2
-        $$
+$$
+l(y_i, \hat{y}_i)\approx l(y_i, \hat{y}_i)+\frac{\delta L}{\delta \hat y_i}f_t (x_i) +\frac{1}{2}\frac{\delta^2 L}{\delta^2 \hat y_i}(f_t (x_i) )^2\approx l(f_{k-1}(x_i))+g_if_t (x_i)+\frac{1}{2}h_i(f_t (x_i) )^2
+$$
         
     - 对于任意一个样本计算伪残差(对上一个评估器的预测结果的损失函数中对预测值求一阶导数作为分子，二阶导数作为分母)
         
-        $$
-        r=-\frac{\frac{\delta l(y_i, F_{k-1}(x_i))}{\delta F_{k-1}(x_i)}}{\frac{\delta^2 l(y_i, F_{k-1}(x_i))}{\delta^2 F_{k-1}(x_i)}}
-        $$
+$$
+r=-\frac{\frac{\delta l(y_i, F_{k-1}(x_i))}{\delta F_{k-1}(x_i)}}{\frac{\delta^2 l(y_i, F_{k-1}(x_i))}{\delta^2 F_{k-1}(x_i)}}
+$$
         
     - 创建新的评估器, 拟合训练数据和预测标签(预测标签为伪残差/负梯度)
     - 更新迭代公式为
         
-        $$
-        F_k(x_i)=F_{k-1}(x_i)+\alpha f_k(x_i)
-        $$
+$$
+F_k(x_i)=F_{k-1}(x_i)+\alpha f_k(x_i)
+$$
         
     - 迭代完成最终模型输出结果为
         
-        $$
-        Final(x_i)=\sum^k_{k=1}f_k(x_i)
-        $$
+$$
+Final(x_i)=\sum^k_{k=1}f_k(x_i)
+$$
         
 - 导入XGBoost语句
     
