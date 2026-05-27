@@ -13,7 +13,7 @@
 
 ## 📖 内容概览
 
-- ✅ **数据预处理**：数据集划分（含防泄漏）、缺失值处理（SimpleImputer / KNN / Iterative）、异常值检测（3σ / IQR）、样本不均衡（SMOTE / 权重调整）
+- ✅ **数据预处理**：数据集划分（含防数据泄漏）、缺失值处理（SimpleImputer / KNN / Iterative）、异常值检测（3σ / IQR）、样本不均衡（SMOTE / 权重调整）
 - ✅ **特征工程**：无量纲化（标准化/归一化/鲁棒缩放）、离散/连续变量编码（OneHot / 分箱 / WOE）、文本特征提取（TF-IDF / CountVectorizer）、特征衍生与选择（方差/卡方/嵌入法/包装法）
 - ✅ **经典算法**：线性回归、Lasso/Ridge/ElasticNet、逻辑回归、SVM/SVR、决策树、KNN、朴素贝叶斯（高斯/多项式/伯努利/补集）
 - ✅ **集成学习**：Bagging（随机森林）、Boosting（AdaBoost / GBDT / XGBoost / LightGBM / CatBoost）、Stacking / Voting 融合
